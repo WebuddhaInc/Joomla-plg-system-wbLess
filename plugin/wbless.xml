@@ -12,7 +12,7 @@
   <config>
     <fields name="params">
       <fieldset name="basic">
-        <field name="watch_paths" type="textarea" default="templates/{$template}/less/" label="Watch Paths" size="5" description="Paths to watch for less file changes." />
+        <field name="watch_paths" type="textarea" default="templates/{$template}/" label="Watch Paths" size="5" description="Paths to watch for less file changes." />
       </fieldset>
     </fields>
   </config>
