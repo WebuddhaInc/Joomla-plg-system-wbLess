@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="3.1" type="plugin" group="system" method="upgrade">
+  <name>plg_system_wbless</name>
+  <author>David Hunt (webuddha.com)</author>
+  <creationDate>March 2015</creationDate>
+  <copyright>(c)2015 Webuddha.com, The Holodyn Corporation. All rights reserved.</copyright>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <authorEmail>webmaster@webuddha.com</authorEmail>
+  <authorUrl>www.webuddha.com</authorUrl>
+  <version>3.0.0</version>
+  <description>Webuddha Less Autocompiler</description>
+  <config>
+    <fields name="params">
+      <fieldset name="basic">
+        <field name="watch_paths" type="textarea" default="templates/{$template}/less/" label="Watch Paths" size="5" description="Paths to watch for less file changes." />
+      </fieldset>
+    </fields>
+  </config>
+  <files>
+    <filename plugin="wbless">wbless.php</filename>
+  </files>
+  <languages folder="language">
+    <language tag="en-GB">en-GB.plg_system_wbless.ini</language>
+    <language tag="en-GB">en-GB.plg_system_wbless.sys.ini</language>
+  </languages>
+</extension>
