@@ -120,17 +120,41 @@ class plgSystemWbLess extends JPlugin {
                       }
                     }
                   }
+
+                  /*
+                   * INC PARSER WRAPPER
+                   */
                   if( empty($lessParser) ){
                     require_once 'lessc/lessc.inc.php';
-                    $lessParser = new Less_Parser(array(
-                      'compress' => $this->params->get('compress', 0)
-                      ));
+                    $lessCompiler = new lessc();
+                    if( $this->params->get('compress', 0) ){
+                      $lessCompiler->setFormatter('compressed');
+                    }
                   }
-                  if( isset($lessParser) ){
+                  if( isset($lessCompiler) ){
                     $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
-                    $lessParser->parseFile( $source_path.$source_file, $source_path );
-                    file_put_contents( $target_path.$target_file, $lessParser->getCss() );
+                    $lessCompiler->compileFile( $source_path.$source_file, $target_path.$target_file );
                   }
+
+                  /*
+                   * LIB PARSER DIRECTLY
+                   *
+                    if( empty($lessParser) ){
+                      if( !class_exists('Less_Parser') ){
+                        require_once 'lessc/lib/Less/Autoloader.php';
+                        Less_Autoloader::register();
+                      }
+                      $lessParser = new Less_Parser(array(
+                        'compress' => $this->params->get('compress', 0)
+                        ));
+                    }
+                    if( isset($lessParser) ){
+                      $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
+                      $lessParser->parseFile( $source_path.$source_file, $source_path );
+                      file_put_contents( $target_path.$target_file, $lessParser->getCss() );
+                    }
+                  */
+
                 }
               }
             }
