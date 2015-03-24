@@ -120,13 +120,16 @@ class plgSystemWbLess extends JPlugin {
                       }
                     }
                   }
-                  if( empty($less) ){
+                  if( empty($lessParser) ){
                     require_once 'lessc/lessc.inc.php';
-                    $less = new lessc;
+                    $lessParser = new Less_Parser(array(
+                      'compress' => $this->params->get('compress', 0)
+                      ));
                   }
-                  if( isset($less) ){
+                  if( isset($lessParser) ){
                     $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
-                    $less->compileFile( $source_path.$source_file, $target_path.$target_file );
+                    $lessParser->parseFile( $source_path.$source_file, $source_path );
+                    file_put_contents( $target_path.$target_file, $lessParser->getCss() );
                   }
                 }
               }
