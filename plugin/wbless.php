@@ -28,6 +28,9 @@ class plgSystemWbLess extends JPlugin {
 
     $app = JFactory::getApplication();
     if( $app->isAdmin() ){
+
+      // Skip admin requests
+
     }
     else {
 
@@ -80,6 +83,9 @@ class plgSystemWbLess extends JPlugin {
                     }
                   }
                 }
+              }
+              else {
+                throw new Exception('Error parsing contents of ' . $source_path . $source_file);
               }
             }
           }
