@@ -17,7 +17,7 @@
           <option value="0">No</option>
           <option value="1">Yes</option>
         </field>
-        <field name="trigger_event" type="radio" default="0" label="Compress Output" description="Compress CSS output and remove comments.">
+        <field name="trigger_event" type="list" default="onAfterDispatch" label="Trigger Event" description="Event that will trigger the CSS generation.">
           <option>onAfterDispatch</option>
           <option>onBeforeExecute</option>
           <option>onAfterExecute</option>
