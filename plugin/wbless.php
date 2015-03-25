@@ -20,11 +20,53 @@ if( !function_exists('inspect') ){
 
 class plgSystemWbLess extends JPlugin {
 
-  function __construct(&$subject, $config){
+  private $_lessParser;
+  private $_lessEnvironment;
+
+  /*
+   *
+   *  Run after system dispatch
+   *
+   */
+  public function __construct(&$subject, $config){
     parent::__construct($subject, $config);
   }
 
-  function onAfterDispatch(){
+  /*
+   *
+   *  Dispatch Events
+   *
+   *
+   */
+  public function onAfterDispatch(){
+    $this->_onEvent( __FUNCTION__ );
+  }
+  public function onBeforeExecute(){
+    $this->_onEvent( __FUNCTION__ );
+  }
+  public function onAfterExecute(){
+    $this->_onEvent( __FUNCTION__ );
+  }
+
+  /*
+   *
+   *  Handle Dispatch Events
+   *
+   *
+   */
+  private function _onEvent( $eventName, $eventParams ){
+    if( $eventName == $this->params->get('trigger_event', 'onAfterDispatch') ){
+      $this->_execute();
+    }
+  }
+
+  /*
+   *
+   *  Execute wbLess processing
+   *
+   *
+   */
+  private function _execute(){
 
     $app = JFactory::getApplication();
     if( $app->isAdmin() ){
@@ -126,10 +168,15 @@ class plgSystemWbLess extends JPlugin {
                       }
                     }
                   }
+                  $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
+                  $this->_compileLessFile(
+                      array('path' => $source_path, 'file' => $source_file),
+                      array('path' => $target_path, 'file' => $target_file)
+                      );
 
                   /*
                    * INC PARSER WRAPPER
-                   */
+                   *
                   if( empty($lessParser) ){
                     require_once 'lessc/lessc.inc.php';
                     $lessCompiler = new lessc();
@@ -141,6 +188,7 @@ class plgSystemWbLess extends JPlugin {
                     $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
                     $lessCompiler->compileFile( $source_path.$source_file, $target_path.$target_file );
                   }
+                   */
 
                   /*
                    * LIB PARSER DIRECTLY
@@ -176,6 +224,86 @@ class plgSystemWbLess extends JPlugin {
 
   }
 
+  /*
+   *
+   *  Write a compiled LESS file to disk
+   *
+   */
+  private function compileLessFile( $inFileInfo, $outFileInfo = null ){
+
+    // Input File
+      $inFile = null;
+      $inPath = null;
+      if( isset($inFileInfo['path']) ){
+        $inPath = $inFileInfo['path'];
+        $inFile = $inFileInfo['file'];
+      }
+      else {
+        $inFile = (string)$inFileInfo;
+      }
+      $inFullPath = ($inPath?$inPath:'') . $inFile;
+
+    // Output File
+      $outFile = null;
+      $outPath = null;
+      if( isset($outFileInfo['path']) ){
+        $outPath = $outFileInfo['path'];
+        $outFile = $outFileInfo['file'];
+      }
+      else if( !is_null($outFileInfo) ) {
+        $outFile = (string)$outFileInfo;
+      }
+      if( is_null($outFile) ){
+        $outFullPath = ($outPath?$outPath:'') . preg_replace('/\.less$/','',$inFile) . '.css';
+      }
+      else {
+        $outFullPath = ($outPath?$outPath:'') . $outFile;
+      }
+
+    // Verify File
+      if (!is_readable($inFullPath)) {
+        throw new Exception('failed to find file '.$inFullPath);
+      }
+
+    // Load Parser
+      if( empty($this->_lessParser) ){
+        if( !class_exists('Less_Parser') ){
+          require_once 'lessc/lib/Less/Autoloader.php';
+          Less_Autoloader::register();
+        }
+        $this->_lessEnvironment = new Less_Environment();
+        $this->_lessParser = new Less_Parser( $this->_lessEnvironment );
+      }
+
+    // Parse & Store
+      $lessParser = $this->_lessParser;
+      if( isset($lessParser) ){
+        // Prepare callback for symlink correction
+          $importDirs = array();
+          if( realpath($inPath) != $inPath ){
+            $importDirs[$inPath] = create_function('$fname', 'return array(Less_Environment::normalizePath(\''.$inPath.'\'.$fname), null);');
+          }
+        // Reset Parser
+          $lessParser->Reset(
+            array(
+              'import_dirs' => $importDirs,
+              'compress' => $this->params->get('compress', 0)
+            ));
+        // Parse & Write Output
+          $lessParser->parseFile( $inFullPath );
+          file_put_contents( $outFullPath, $lessParser->getCss() );
+      }
+      else {
+        throw new Exception('failed to load parser');
+      }
+
+  }
+
+  /*
+   *
+   *  Scan folder for regex dir / filename match
+   *
+   */
   private function &_find_files($path,$regex='/.*/',$recurse=true,$folders=false){
     $path = preg_replace('/\/$/','',$path);
     $fileList = Array();

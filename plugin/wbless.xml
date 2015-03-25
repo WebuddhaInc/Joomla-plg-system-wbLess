@@ -17,6 +17,11 @@
           <option value="0">No</option>
           <option value="1">Yes</option>
         </field>
+        <field name="trigger_event" type="radio" default="0" label="Compress Output" description="Compress CSS output and remove comments.">
+          <option>onAfterDispatch</option>
+          <option>onBeforeExecute</option>
+          <option>onAfterExecute</option>
+        </field>
       </fieldset>
     </fields>
   </config>
