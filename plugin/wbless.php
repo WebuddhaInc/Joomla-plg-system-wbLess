@@ -112,15 +112,17 @@ class plgSystemWbLess extends JPlugin {
                   }
                   if( isset($file->import) && is_array($file->import) ){
                     foreach( $file->import AS $import ){
-                      $target_file = $source_path . $import;
-                      if( empty($lessDependent[ $dependentFile ]) ){
-                        $lessDependent[ $dependentFile ] = array();
-                      }
-                      if( empty($partialMTimes[$target_file]) ){
-                        $partialMTimes[$target_file] = filemtime($target_file);
-                      }
-                      if( empty($lessDependent[ $dependentFile ][$target_file]) ){
-                        $lessDependent[ $dependentFile ][ $target_file ] = $partialMTimes[$target_file];
+                      $target_file = self::normalizePath( $source_path . $import );
+                      if( is_readable($target_file) ){
+                        if( empty($lessDependent[ $dependentFile ]) ){
+                          $lessDependent[ $dependentFile ] = array();
+                        }
+                        if( empty($partialMTimes[$target_file]) ){
+                          $partialMTimes[$target_file] = filemtime($target_file);
+                        }
+                        if( empty($lessDependent[ $dependentFile ][$target_file]) ){
+                          $lessDependent[ $dependentFile ][ $target_file ] = $partialMTimes[$target_file];
+                        }
                       }
                     }
                   }
@@ -226,10 +228,28 @@ class plgSystemWbLess extends JPlugin {
 
   /*
    *
+   *  Normalize Path (remove dot notations)
+   *
+   */
+  public static function normalizePath($path){
+    $result = preg_replace('/(\/\.\/\|\.\/)/','/',$path);
+    // $regex  = '/\/[A-Za-z\s\.\,\-\_\+\=\[\]\{\}\:\;\"\'\<\>]+\/\.\.\//';
+    $regex  = '/\/[^\/]+\/\.\.\//';
+    do {
+      $lastResult = $result;
+      if( preg_match($regex,$result) ){
+        $result = preg_replace($regex, '/', $result, 1);
+      }
+    } while( $result != $lastResult );
+    return $result;
+  }
+
+  /*
+   *
    *  Write a compiled LESS file to disk
    *
    */
-  private function compileLessFile( $inFileInfo, $outFileInfo = null ){
+  private function _compileLessFile( $inFileInfo, $outFileInfo = null ){
 
     // Input File
       $inFile = null;
