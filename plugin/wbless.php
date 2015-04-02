@@ -104,25 +104,26 @@ class plgSystemWbLess extends JPlugin {
               $source_file = $lessrc_file['name'];
               $lessrc_json = json_decode( file_get_contents($source_path . $source_file) );
               if( is_object($lessrc_json) ){
-                $files = isset($lessrc_json->files) ? $lessrc_json->files : array($lessrc_json);
+                $files  = isset($lessrc_json->files) ? $lessrc_json->files : array($lessrc_json);
+                $shared = isset($lessrc_json->import) ? $lessrc_json->import : array();
                 foreach( $files AS $file ){
                   $dependentFile = $source_path . ($lessrc_file['name'] == '.lessrc' ? '*' : substr($lessrc_file['name'], 0, strlen($lessrc_file['name'])-2));
                   if( isset($file->file) && is_string($file->file) ){
                     $dependentFile = $source_path . $file->file;
                   }
-                  if( isset($file->import) && is_array($file->import) ){
-                    foreach( $file->import AS $import ){
-                      $target_file = self::normalizePath( $source_path . $import );
-                      if( is_readable($target_file) ){
-                        if( empty($lessDependent[ $dependentFile ]) ){
-                          $lessDependent[ $dependentFile ] = array();
-                        }
-                        if( empty($partialMTimes[$target_file]) ){
-                          $partialMTimes[$target_file] = filemtime($target_file);
-                        }
-                        if( empty($lessDependent[ $dependentFile ][$target_file]) ){
-                          $lessDependent[ $dependentFile ][ $target_file ] = $partialMTimes[$target_file];
-                        }
+                  $importLookupList = ( isset($file->import) && is_array($file->import) ? $file->import : array() );
+                  $importLookupList = array_merge( $importLookupList, $shared );
+                  foreach( $importLookupList AS $import ){
+                    $target_file = self::normalizePath( $source_path . $import );
+                    if( is_readable($target_file) ){
+                      if( empty($lessDependent[ $dependentFile ]) ){
+                        $lessDependent[ $dependentFile ] = array();
+                      }
+                      if( empty($partialMTimes[$target_file]) ){
+                        $partialMTimes[$target_file] = filemtime($target_file);
+                      }
+                      if( empty($lessDependent[ $dependentFile ][$target_file]) ){
+                        $lessDependent[ $dependentFile ][ $target_file ] = $partialMTimes[$target_file];
                       }
                     }
                   }
