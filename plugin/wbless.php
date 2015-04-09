@@ -158,8 +158,17 @@ class plgSystemWbLess extends JPlugin {
                     $target_filemtime = filemtime($target_path.$target_file);
                     if( $source_filemtime < $target_filemtime ){
                       $less_is_more = true;
-                      if( isset($lessDependent[$source_path.$source_file]) ){
-                        foreach( $lessDependent[$source_path.$source_file] AS $dependencyFile => $dependencyFileTime ){
+                      $less_matches = (
+                        isset($lessDependent[$source_path.$source_file])
+                          ? $lessDependent[$source_path.$source_file]
+                          : (
+                            isset($lessDependent[$source_path.'*'])
+                            ? $lessDependent[$source_path.'*']
+                            : null
+                            )
+                        );
+                      if( $less_matches ){
+                        foreach( $less_matches AS $dependencyFile => $dependencyFileTime ){
                           if( $target_filemtime < $dependencyFileTime ){
                             $less_is_more = false;
                             break;
