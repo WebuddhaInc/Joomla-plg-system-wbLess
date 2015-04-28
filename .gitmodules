@@ -1,3 +1,4 @@
 [submodule "plugin/lessc"]
 	path = plugin/lessc
 	url = https://github.com/oyejorge/less.php
+  ignore = dirty
