@@ -160,14 +160,17 @@ class plgSystemWbLess extends JPlugin {
                       $less_is_more = true;
                       $less_matches = (
                         isset($lessDependent[$source_path.$source_file])
-                          ? $lessDependent[$source_path.$source_file]
-                          : (
-                            isset($lessDependent[$source_path.'*'])
-                            ? $lessDependent[$source_path.'*']
-                            : null
-                            )
+                        ? $lessDependent[$source_path.$source_file]
+                        : array()
                         );
-                      if( $less_matches ){
+                      if( empty($less_matches) || !$this->params->get('dependency_exclude', 0) ){
+                        $less_matches = array_merge($less_matches, (
+                              isset($lessDependent[$source_path.'*'])
+                              ? $lessDependent[$source_path.'*']
+                              : array()
+                              ));
+                      }
+                      if( !empty($less_matches) ){
                         foreach( $less_matches AS $dependencyFile => $dependencyFileTime ){
                           if( $target_filemtime < $dependencyFileTime ){
                             $less_is_more = false;

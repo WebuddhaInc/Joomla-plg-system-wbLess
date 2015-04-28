@@ -17,6 +17,10 @@
           <option value="0">No</option>
           <option value="1">Yes</option>
         </field>
+        <field name="dependency_exclude" type="radio" default="0" label="Watch Minimum Dependency" description="Are wildcard rules considered when a specific dependency ruleset is defined in .lessrc files.">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </field>
         <field name="trigger_event" type="list" default="onAfterDispatch" label="Trigger Event" description="Event that will trigger the CSS generation.">
           <option>onAfterDispatch</option>
           <option>onBeforeExecute</option>
