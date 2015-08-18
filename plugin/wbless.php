@@ -76,6 +76,25 @@ class plgSystemWbLess extends JPlugin {
     }
     else {
 
+      // Trigger Domains
+        $trigger_domains = explode("\r\n", $this->params->get('trigger_domains'));
+        if( !empty($trigger_domains) ){
+          $domains_match = 0;
+          $domains_valid = 0;
+          foreach( $trigger_domains AS $trigger_domain ){
+            $trigger_domain = trim($trigger_domain);
+            if( !empty($trigger_domain) ){
+              $domains_valid++;
+              if( $_SERVER['SERVER_NAME'] == $trigger_domain ){
+                $domains_match++;
+              }
+            }
+          }
+          if( $domains_valid && !$domains_match ){
+            return;
+          }
+        }
+
       // Find Watch Paths
         $watch_paths  = explode("\r\n", $this->params->get('watch_paths'));
         $watch_config = array();

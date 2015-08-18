@@ -13,6 +13,7 @@
     <fields name="params">
       <fieldset name="basic">
         <field name="watch_paths" type="textarea" default="templates/{$template}/" label="Watch Paths" size="5" description="Paths to watch for less file changes." />
+        <field name="trigger_domains" type="textarea" default="" label="Trigger Domains" size="5" description="Only run for the following domains. One per-line." />
         <field name="compress" type="radio" default="0" label="Compress Output" description="Compress CSS output and remove comments.">
           <option value="0">No</option>
           <option value="1">Yes</option>
