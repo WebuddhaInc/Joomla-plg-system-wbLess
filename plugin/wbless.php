@@ -338,8 +338,15 @@ class plgSystemWbLess extends JPlugin {
         // Reset Parser
           $lessParser->Reset(
             array(
-              'import_dirs' => $importDirs,
-              'compress' => $this->params->get('compress', 0)
+              /*
+              NOT WORKING - PATH ERRORS
+              'sourceMap'         => true,
+              'sourceMapWriteTo'  => $outFullPath . '.map',
+              'sourceMapBasepath' => dirname($inFullPath),
+              */
+
+              'import_dirs'       => $importDirs,
+              'compress'          => $this->params->get('compress', 0)
             ));
         // Parse & Write Output
           $lessParser->parseFile( $inFullPath );
