@@ -170,6 +170,9 @@ class plgSystemWbLess extends JPlugin {
               $source_file = $less_file['name'];
               if( substr($source_file,0,1) != '_' ){
                 $target_path = $target_base . substr($source_path, strlen($abs_path));
+                if( substr($target_path, strlen($target_path) - 5) == ('less'.DIRECTORY_SEPARATOR) ){
+                  $target_path = substr($target_path, 0, strlen($target_path) - 5) . 'css' . DIRECTORY_SEPARATOR;
+                }
                 $target_file = preg_replace('/\.less$/','.css',$less_file['name']);
                 if( is_dir($target_path) ){
                   if( is_readable($target_path.$target_file) ){
