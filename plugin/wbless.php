@@ -335,7 +335,10 @@ class plgSystemWbLess extends JPlugin {
       if( isset($lessParser) ){
         // Prepare callback for symlink correction
           $importDirs = array();
-          if( realpath($inPath) != $inPath ){
+          if(
+            realpath($inPath) != $inPath
+            && realpath($inPath) . DIRECTORY_SEPARATOR != $inPath
+            ){
             $importDirs[$inPath] = create_function('$fname', 'return array(Less_Environment::normalizePath(\''.$inPath.'\'.$fname), null);');
           }
         // Reset Parser
