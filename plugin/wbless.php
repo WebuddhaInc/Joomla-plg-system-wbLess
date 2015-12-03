@@ -102,6 +102,7 @@ class plgSystemWbLess extends JPlugin {
         for($i=0;$i<count($watch_paths);$i++){
           $watch_path = trim(preg_replace('/[\r\n]/','',preg_replace('/\{\$template\}/', $template, $watch_paths[$i])));
           if( strlen($watch_path) ){
+            $watch_paths[$i] = $watch_path;
             $abs_path  = JPATH_BASE . DIRECTORY_SEPARATOR . $watch_path;
             if( $abs_path != JPATH_BASE . DIRECTORY_SEPARATOR && is_dir($abs_path) ){
               $watch_config[ $watch_path ] = array(
@@ -109,6 +110,18 @@ class plgSystemWbLess extends JPlugin {
                 );
             }
           }
+        }
+
+      // Process
+        if( class_exists('\WebuddhaInc\LessMonitor') ){
+          (new \WebuddhaInc\LessMonitor(array(
+            'base_path'          => JPATH_ROOT . '/',
+            'watch_paths'        => $watch_paths,
+            'dependency_exclude' => $this->params->get('dependency_exclude', 0),
+            'compress'           => $this->params->get('compress', 0)
+            )))
+            ->execute();
+          return true;
         }
 
       // Examing dependencies
