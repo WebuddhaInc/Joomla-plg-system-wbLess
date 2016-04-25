@@ -33,6 +33,8 @@
   </config>
   <files>
     <filename plugin="wbless">wbless.php</filename>
+    <folder>language</folder>
+    <folder>lessc</folder>
   </files>
   <languages folder="language">
     <language tag="en-GB">en-GB/en-GB.plg_system_wbless.ini</language>
