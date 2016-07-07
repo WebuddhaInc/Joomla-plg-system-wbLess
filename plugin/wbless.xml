@@ -28,6 +28,11 @@
           <option value="onBeforeExecute">onBeforeExecute</option>
           <option value="onAfterExecute">onAfterExecute</option>
         </field>
+        <field name="trigger_scope" type="list" default="" label="Process Scope" description="Should the trigger be observed and less files processed on the Admin, Client or both areas.">
+          <option value="all">All Requests</option>
+          <option value="admin">Admin Area Requests</option>
+          <option value="client">Client Area Requests</option>
+        </field>
       </fieldset>
     </fields>
   </config>
