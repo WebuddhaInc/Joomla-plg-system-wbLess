@@ -120,8 +120,9 @@ class plgSystemWbLess extends JPlugin {
       }
 
     // Process
-      if( class_exists('\WebuddhaInc\LessMonitor') ){
-        (new \WebuddhaInc\LessMonitor(array(
+      $monitorClass = $this->params->get('monitor_class', '\WebuddhaInc\LessMonitor');
+      if( $monitorClass && class_exists($monitorClass) ){
+        (new $monitorClass(array(
           'base_path'          => JPATH_ROOT . '/',
           'watch_paths'        => $watch_paths,
           'dependency_exclude' => $this->params->get('dependency_exclude', 0),
@@ -131,7 +132,7 @@ class plgSystemWbLess extends JPlugin {
         return true;
       }
 
-    // Examing dependencies
+    // Examine dependencies
       $lessDependent = array();
       $partialMTimes = array();
       foreach($watch_config AS $watch_path => $watch_path_config){
@@ -154,15 +155,26 @@ class plgSystemWbLess extends JPlugin {
                 $importLookupList = array_merge( $importLookupList, $shared );
                 foreach( $importLookupList AS $import ){
                   $target_file = self::normalizePath( $source_path . $import );
-                  if( is_readable($target_file) ){
-                    if( empty($lessDependent[ $dependentFile ]) ){
-                      $lessDependent[ $dependentFile ] = array();
+                  $import_files = array( $target_file );
+                  if( preg_match('/\*$/', $target_file) ){
+                    $import_files = self::_find_files( preg_replace('/\*$/', '', $target_file), '/\.less$/' );
+                    if( $import_files ){
+                      for( $i=0; $i<count($import_files); $i++ ){
+                        $import_files[$i] = (empty($import_files[$i]['path']) ? '' : $import_files[$i]['path'] . DIRECTORY_SEPARATOR) . $import_files[$i]['name'];
+                      }
                     }
-                    if( empty($partialMTimes[$target_file]) ){
-                      $partialMTimes[$target_file] = filemtime($target_file);
-                    }
-                    if( empty($lessDependent[ $dependentFile ][$target_file]) ){
-                      $lessDependent[ $dependentFile ][ $target_file ] = $partialMTimes[$target_file];
+                  }
+                  foreach( $import_files AS $import_file ){
+                    if( is_readable($import_file) ){
+                      if( empty($lessDependent[ $dependentFile ]) ){
+                        $lessDependent[ $dependentFile ] = array();
+                      }
+                      if( empty($partialMTimes[$import_file]) ){
+                        $partialMTimes[$import_file] = filemtime($import_file);
+                      }
+                      if( empty($lessDependent[ $dependentFile ][$import_file]) ){
+                        $lessDependent[ $dependentFile ][ $import_file ] = $partialMTimes[$import_file];
+                      }
                     }
                   }
                 }
@@ -205,7 +217,7 @@ class plgSystemWbLess extends JPlugin {
                       ? $lessDependent[$source_path.$source_file]
                       : array()
                       );
-                    if( empty($less_matches) || !$this->params->get('dependency_exclude', 0) ){
+                    if( empty($less_matches) || !$this->params->get('dependency_exclude', false) ){
                       $less_matches = array_merge($less_matches, (
                             isset($lessDependent[$source_path.'*'])
                             ? $lessDependent[$source_path.'*']
@@ -230,42 +242,6 @@ class plgSystemWbLess extends JPlugin {
                     array('path' => $source_path, 'file' => $source_file),
                     array('path' => $target_path, 'file' => $target_file)
                     );
-
-                /*
-                 * INC PARSER WRAPPER
-                 *
-                if( empty($lessParser) ){
-                  require_once 'lessc/lessc.inc.php';
-                  $lessCompiler = new lessc();
-                  if( $this->params->get('compress', 0) ){
-                    $lessCompiler->setFormatter('compressed');
-                  }
-                }
-                if( isset($lessCompiler) ){
-                  $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
-                  $lessCompiler->compileFile( $source_path.$source_file, $target_path.$target_file );
-                }
-                 */
-
-                /*
-                 * LIB PARSER DIRECTLY
-                 *
-                  if( empty($lessParser) ){
-                    if( !class_exists('Less_Parser') ){
-                      require_once 'lessc/lib/Less/Autoloader.php';
-                      Less_Autoloader::register();
-                    }
-                    $lessParser = new Less_Parser(array(
-                      'compress' => $this->params->get('compress', 0)
-                      ));
-                  }
-                  if( isset($lessParser) ){
-                    $lessProcessed[] = array($source_path.$source_file, $target_path.$target_file);
-                    $lessParser->parseFile( $source_path.$source_file, $source_path );
-                    file_put_contents( $target_path.$target_file, $lessParser->getCss() );
-                  }
-                */
-
               }
             }
           }

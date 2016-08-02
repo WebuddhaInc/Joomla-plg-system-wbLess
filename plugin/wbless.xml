@@ -7,7 +7,7 @@
   <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
   <authorEmail>webmaster@webuddha.com</authorEmail>
   <authorUrl>www.webuddha.com</authorUrl>
-  <version>3.2.0</version>
+  <version>3.3.0</version>
   <description>Webuddha Less Autocompiler</description>
   <config>
     <fields name="params">
@@ -33,6 +33,7 @@
           <option value="admin">Admin Area Requests</option>
           <option value="client">Client Area Requests</option>
         </field>
+        <field name="monitor_class" type="text" default="\WebuddhaInc\LessMonitor" label="Monitor Class" size="5" description="Define a custom compiler class (must be available at runtime)." />
       </fieldset>
     </fields>
   </config>
