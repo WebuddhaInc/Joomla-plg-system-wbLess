@@ -1,8 +1,11 @@
 <?php
-
-/*
-  wbPack - Javascript Package for Joomla
-*/
+/**
+ * @package    Webuddha/Joomla/Plugin/System/wbless
+ * @author     Holodyn, Webuddha Atlanta
+ *
+ * @copyright  Copyright (C) 2008 - 2016 Holodyn Global. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE
+ */
 
 // check that we have access
 defined( '_JEXEC' ) or die( 'Restricted access' );
