@@ -56,7 +56,11 @@ class plgSystemWbLess extends JPlugin {
    */
   private function _onEvent( $eventName, $eventParams = array() ){
     if( $eventName == $this->params->get('trigger_event', 'onAfterDispatch') ){
-      $this->_execute();
+      try {
+        $this->_execute();
+      } catch (Exception $e) {
+        JError::raiseWarning( 100, $e->getMessage() );
+      }
     }
   }
 
