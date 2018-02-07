@@ -69,8 +69,16 @@
 
 # Package
 
-	mkdir -p "$TEMPPATH/"
+  mkdir -p "$TEMPPATH/"
+  REALTEMPPATH=$(cd "$TEMPPATH";pwd)
 	cp -fr "$ARPATH/plugin/." "$TEMPPATH"
-	cd "$TEMPPATH"
-	zip -ur "$PACKAGE" .
-	rm -rf "$TEMPPATH/"
+	cd "$REALTEMPPATH"
+  if [ $(pwd) == $REALTEMPPATH ]; then
+    rm -rf \
+      lessc/.git \
+      lessc/.git* \
+      lessc/bin \
+      lessc/test
+  	zip -ur "$PACKAGE" .
+  	rm -rf "$REALTEMPPATH/"
+  fi
