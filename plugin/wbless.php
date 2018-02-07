@@ -114,8 +114,8 @@ class plgSystemWbLess extends JPlugin {
         $watch_path = trim(preg_replace('/[\r\n]/','',preg_replace('/\{\$template\}/', $template, $watch_paths[$i])));
         if( strlen($watch_path) ){
           $watch_paths[$i] = $watch_path;
-          $abs_path  = JPATH_BASE . DIRECTORY_SEPARATOR . $watch_path;
-          if( $abs_path != JPATH_BASE . DIRECTORY_SEPARATOR && is_dir($abs_path) ){
+          $abs_path  = JPATH_ROOT . DIRECTORY_SEPARATOR . $watch_path;
+          if( $abs_path != JPATH_ROOT . DIRECTORY_SEPARATOR && is_dir($abs_path) ){
             $watch_config[ $watch_path ] = array(
               'abs_path' => $abs_path
               );
