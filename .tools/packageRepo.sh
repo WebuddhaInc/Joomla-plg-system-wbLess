@@ -79,6 +79,6 @@
       lessc/.git* \
       lessc/bin \
       lessc/test
-  	zip -ur "$PACKAGE" .
+  	zip -r "$PACKAGE" .
   	rm -rf "$REALTEMPPATH/"
   fi
