@@ -340,7 +340,7 @@ class plgSystemWbLess extends JPlugin {
             realpath($inPath) != $inPath
             && realpath($inPath) . DIRECTORY_SEPARATOR != $inPath
             ){
-            $importDirs[$inPath] = create_function('$fname', 'return array(Less_Environment::normalizePath(\''.$inPath.'\'.$fname), null);');
+            $importDirs[$inPath] = function($fname) use ($inPath){ return array(Less_Environment::normalizePath($inPath . $fname), null); };
           }
         // Reset Parser
           $lessParser->Reset(
