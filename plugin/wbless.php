@@ -357,7 +357,9 @@ class plgSystemWbLess extends JPlugin {
             ));
         // Parse & Write Output
           $lessParser->parseFile( $inFullPath );
-          file_put_contents( $outFullPath, $lessParser->getCss() );
+          if (!file_put_contents( $outFullPath, $lessParser->getCss() )) {
+            throw new Exception('failed to write CSS file '.$outFullPath);
+          }
       }
       else {
         throw new Exception('failed to load parser');
